@@ -20,3 +20,15 @@ class ConfigurationTestCase(unittest.TestCase):
     def test_SettingValues(self):
         self.conf.setExecutionValues(dict(thing=1))
         self.assertEquals(1, int(self.conf.parser.get('exec', 'thing')))
+    
+    def test_SetThreads(self):
+        self.conf.setNumThreads(10)
+        self.assertEqual(10, self.conf.getNumThreads())
+        
+    def test_NoSectionsReadInFile(self):
+        '''
+        If the input configuration file doesn't have the basic section set, want to make sure that they get added first
+        '''
+        conf = Configuration('')
+        conf.setMaxLatency(10)
+        self.assertEquals(10, conf.getMaxLatency())

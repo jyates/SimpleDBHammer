@@ -22,7 +22,7 @@ class Hammer(object):
         Connect to the database. Must be called before actually using the hammer.
         Since each connection to MongoDB runs over a different connection pool, each hammer writes to its own port (ensuring that we actually get parallel writes)
         """
-        self.connection = Connection(self.conf.getMongoHostIP(). self.conf.getMongoHostPort())
+        self.connection = Connection(self.conf.getMongoHostIP(), self.conf.getMongoHostPort())
         self.database = self.connection[self.conf.getMongoDatabaseName()]
     
     def write(self):
@@ -55,7 +55,7 @@ class HammerRunner(Thread):
         Do the hammering
         '''
         freq = self.conf.getMaxLatency()
-        times = self.conf.getRepeat()
+        times = self.conf.setNumIterations()
         
         #If times <0, run forever. 
         #otherwise, just run it the specified number of times

@@ -27,7 +27,7 @@ class TestHammerRunner(mox.MoxTestBase):
         
         #record calls on the configuration
         mockConf.getMaxLatency().AndReturn(10)
-        mockConf.getRepeat().AndReturn(2)
+        mockConf.setNumIterations().AndReturn(2)
         
         self.mox.ReplayAll()
         runner = HammerRunner(mockConf, mockHammer)

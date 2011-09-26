@@ -2,8 +2,10 @@
 Created on Sep 25, 2011
 
 @author: jyates
+
+Test all aspects of the hammer utility
 '''
-import unittest
+
 from hammer import Hammer, HammerRunner
 from configuration import Configuration
 import mox
@@ -27,14 +29,37 @@ class TestHammerRunner(mox.MoxTestBase):
         
         #record calls on the configuration
         mockConf.getMaxLatency().AndReturn(10)
-        mockConf.setNumIterations().AndReturn(2)
+        mockConf.getNumIterations().AndReturn(2)
         
         self.mox.ReplayAll()
         runner = HammerRunner(mockConf, mockHammer)
         runner.run()
         
-class TestHammer(unittest.TestCase):
+        #verify the test
+        self.mox.VerifyAll()
+        
+class TestHammer(mox.MoxTestBase):
     """
     Test that the hammer will write the connect, disconnect, and write the correct values to the database
     """
-    pass
+    
+    def test_History(self):
+        #create a generic hammer - should not do anything
+        mockConf = self.mox.CreateMock(Configuration)
+        mockConn = self.mox.CreateMockAnything(description='Mock a connection to a generic database. Just needs a disconnect() method.')
+        mockConn.disconnect()
+        self.mox.ReplayAll()
+        
+        #run the test
+        hammer = Hammer(mockConf)
+        hammer.connection = mockConn
+        hammer.connect()
+        hammer.write()
+        hammer.write()
+        hammer.write()
+        hammer.disconnect()
+        
+        #verify calls and history
+        self.mox.VerifyAll()
+        history = hammer.history
+        self.assertEquals(4, len(history))

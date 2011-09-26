@@ -3,6 +3,7 @@ __author__ = 'jyates'
 from configuration import Configuration
 import argparse
 from hammer import Hammer, HammerRunner
+import datetime
 DEFAULT_CONF ='hammer.cfg'
  
 def main():
@@ -35,11 +36,14 @@ def main():
         
     
     #just join on each thread in turn - ensures that we stop when all threads have stopped running
+    histories = []
     for hammer in hammers:
         hammer.join()
+        histories.append(hammer.history)
         
     #Shutdown message
-    print 'All hammers have finished hammering. '
+    print 'All hammers have finished hammering.'
+    printStats(histories)
  
 def setupParser():
     parser = argparse.ArgumentParser(description='Hammer on a MongoDB installation. Options specified on the command line will override those set in the configuration file')
@@ -76,5 +80,38 @@ def updateConfiguration(conf, kvDict):
         conf.setMongoHostPort(kvDict['port'])
     
 
+def printStats(histories):
+    """
+    Print the stats for each of the hammers, and do some on the fly general stats
+    """
+    print "----------------------------\n Per Hammer stats:\n----------------------------"
+    #print out the stats for each hammer
+    i = 0
+    data = (datetime.timedelta(0),0)
+    for history in histories:
+        point = _printStat(i, history)
+        data = (data[0]+point[0], data[1]+point[1])
+        print '\n'
+        i+=1
+        
+    #print out general statistics
+    print "------------------------------\n General Stats:\n------------------------------"
+    print 'Total writes:\t', data[1]
+    print 'Total time spent writing:\t', str(data[0])
+    print 'Average time spent writing:\t', str(data[0]/data[1])
+        
+def _printStat(index, history):
+    print 'Hammer ', str(index), ':'
+    count = 0
+    totalDiff = datetime.timedelta(0)
+    keys = history.keys()
+    for key in keys:
+        if key == 'done':
+            print 'Finished at :', str(history[key])
+        else:
+            print 'Write ',  str(key), ' took: ', str(history[key])
+            count+= 1
+            totalDiff += history[key]
+    return (totalDiff, count)
 if __name__=='__main__':
     main()

@@ -7,7 +7,6 @@ Do the actual hammering on MongoDB
 '''
 from threading import Thread, Timer
 import random
-from pymongo import Connection
 import datetime
 
 class Hammer(object):
@@ -58,20 +57,6 @@ class Hammer(object):
         #store the done time
         self.history['done'] = datetime.datetime.now()
         
-class MongoHammer(Hammer):
-    """
-    Connect/disconnect from a mongoDB installation.
-    Subclasses should be used for handling specific write cases.
-    The connection must have a disconnect() method or subclass must implement their own disconnect() method
-    """
-    
-    def connect(self, clearHistory=True):
-        """
-        Since each connection to MongoDB runs over a different connection pool, each hammer writes to its own port (ensuring that we actually get parallel writes)
-        """
-        super(Hammer).connect(clearHistory)
-        self.connection = Connection(self.conf.getMongoHostIP(), self.conf.getMongoHostPort())
-        self.database = self.connection[self.conf.getMongoDatabaseName()]
     
 
 class HammerRunner(Thread):
@@ -107,3 +92,50 @@ class HammerRunner(Thread):
             timer.start()
             count+=1
         self.hammer.disconnect()
+        
+class HammerStats(object):
+    """
+    Statistics about how a set of hammers ran
+    Args:
+        hammers: list of histories (which are themselves dictionaries) from hammers
+    """
+    histories = []
+    
+    def append(self, stat):
+        self.histories.append(stat)
+    
+    def printStats(self):
+        """
+        Print the stats for each of the hammers, and do some on the fly general stats
+        """
+        print "----------------------------\n Per Hammer stats:\n----------------------------"
+        #print out the stats for each hammer
+        i = 0
+        data = (datetime.timedelta(0),0)
+        for history in self.histories:
+            point = self._printStat(i, history)
+            data = (data[0]+point[0], data[1]+point[1])
+            print '\n'
+            i+=1
+            
+        #print out general statistics
+        print "------------------------------\n General Stats:\n------------------------------"
+        print 'Total writes:\t', data[1]
+        print 'Total time spent writing:\t', str(data[0])
+        print 'Average time spent writing:\t', str(data[0]/data[1])
+            
+    def _printStat(self, index, history):
+        print 'Hammer ', str(index), ':'
+        count = 0
+        totalDiff = datetime.timedelta(0)
+        keys = history.keys()
+        for key in keys:
+            if key == 'done':
+                print 'Finished at :', str(history[key])
+            else:
+                print 'Write ',  str(key), ' took: ', str(history[key])
+                count+= 1
+                totalDiff += history[key]
+        return (totalDiff, count)
+    
+        pass

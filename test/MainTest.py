@@ -5,8 +5,8 @@ Created on Sep 25, 2011
 '''
 import unittest
 import mox
-from MongoHammer import setupParser, updateConfiguration, printStats
-from configuration import Configuration
+from client import setupParser, updateConfiguration, printStats
+from configuration import MongoConfiguration
 from hammer import Hammer
 
 class TestParser(unittest.TestCase):
@@ -25,7 +25,7 @@ class TestParser(unittest.TestCase):
         parser = setupParser()
         args = vars(parser.parse_args(self.args1))
         #create an empty config
-        conf = Configuration('')
+        conf = MongoConfiguration('')
         updateConfiguration(conf, args)
         #check that we update the values as specified
         self.assertEquals(25, conf.getMongoHostPort())
@@ -53,7 +53,7 @@ class TestStats(mox.MoxTestBase):
         
     def _getHammerHistory(self):
         #create a generic hammer - should not do anything
-        mockConf = self.mox.CreateMock(Configuration)
+        mockConf = self.mox.CreateMock(MongoConfiguration)
         mockConn = self.mox.CreateMockAnything(description='Mock a connection to a generic database. Just needs a disconnect() method.')
         mockConn.disconnect()
         self.mox.ReplayAll()

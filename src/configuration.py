@@ -3,8 +3,7 @@ __author__ = 'jyates'
 import ConfigParser
 from ConfigParser import NoOptionError
 
-#section headers
-mongoSection = "mongo"
+#section header
 executionSection = "exec"
 
 #execution configuration keys
@@ -12,13 +11,6 @@ THREADS_KEY = "threads"
 LATENCY_KEY = "latency"
 REPEAT_KEY = "iterations"
 
-#mongo configuration keys
-HOST_KEY = "ip"
-PORT_KEY = "port"
-
-# Mongo Defaults
-defaultHost = "127.0.0.1"
-defaultPort = "27017"
 # Exection defaults
 defaultThreads = 1
 defaultLatency = 10 # seconds
@@ -34,46 +26,6 @@ class Configuration(object):
     def __init__(self, location):
         self.parser = ConfigParser.SafeConfigParser()
         self.parser.read(location)
-        self.mongoLookup = lambda option, default:self._getConfWithDefault(lambda: self.parser.get(mongoSection, option), default)
-        self.execLookup =  lambda option, default:self._getConfWithDefault(lambda: self.parser.get(executionSection, option), default)
-
-    def getNumThreads(self):
-        return int(self.execLookup(THREADS_KEY, defaultThreads))
-    
-    def setNumThreads(self, numThreads):
-        self.setExecutionValues(dict(threads=numThreads))
-    
-    def getMaxLatency(self):
-        return long(self.execLookup(LATENCY_KEY, defaultLatency))
-    
-    def setMaxLatency(self, timeout):
-        self.setExecutionValues(dict(latency=timeout))
-   
-    def getNumIterations(self):
-        return long(self.execLookup(REPEAT_KEY, defaultRepeat))
-    
-    def setNumIterations(self, count):
-        self.setExecutionValues(dict(iterations=count))
-    
-    def getMongoHostIP(self):
-        return self.mongoLookup(HOST_KEY, defaultHost)
-    
-    def setMongoHostIP(self, host):
-        self.setMongoValues(dict(ip=host))
-    
-    def getMongoHostPort(self):
-        return int(self.mongoLookup(PORT_KEY, defaultPort))
-            
-    def setMongoHostPort(self, Port):
-        self.setMongoValues(dict(port=Port))
-    
-    
-    #Setting values in the configuration - for use with the command line
-    def setExecutionValues(self, keyValues):
-        self._setKeyValues(executionSection, keyValues)
-    
-    def setMongoValues(self, keyValues):
-        self._setKeyValues(mongoSection, keyValues)
             
     def _setKeyValues(self, section, keyValues):
         #make sure that we add the section, if it isn't present
@@ -103,3 +55,37 @@ class Configuration(object):
         except NoOptionError:
             print "No option found - using default", default
             return default
+
+class ExecConfiguration(Configuration):
+    """
+    Configuration for doing general execution
+    """
+
+    def getNumThreads(self):
+        return int(self.execLookup(THREADS_KEY, defaultThreads))
+    
+    def setNumThreads(self, numThreads):
+        self.setExecutionValues(dict(threads=numThreads))
+    
+    def getMaxLatency(self):
+        return long(self.execLookup(LATENCY_KEY, defaultLatency))
+    
+    def setMaxLatency(self, timeout):
+        self.setExecutionValues(dict(latency=timeout))
+   
+    def getNumIterations(self):
+        return long(self.execLookup(REPEAT_KEY, defaultRepeat))
+    
+    def setNumIterations(self, count):
+        self.setExecutionValues(dict(iterations=count))
+    
+    def execLookup(self, option, default):
+        return self._getConfWithDefault(lambda: self.parser.get(executionSection, option), default)
+    
+    #Setting values in the configuration - for use with the command line
+    def setExecutionValues(self, keyValues):
+        self._setKeyValues(executionSection, keyValues)
+
+
+        
+    

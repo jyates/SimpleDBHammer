@@ -7,7 +7,7 @@ Test all aspects of the hammer utility
 '''
 
 from hammer import Hammer, HammerRunner
-from configuration import Configuration
+from configuration import ExecConfiguration
 import mox
 
 
@@ -20,7 +20,7 @@ class TestHammerRunner(mox.MoxTestBase):
     def testRunCount(self):
         #setup objs to pass into the runner
         mockHammer = self.mox.CreateMock(Hammer)
-        mockConf = self.mox.CreateMock(Configuration)
+        mockConf = self.mox.CreateMock(ExecConfiguration)
         
         #record calls on the hammer
         mockHammer.connect()
@@ -45,7 +45,7 @@ class TestHammer(mox.MoxTestBase):
     
     def test_History(self):
         #create a generic hammer - should not do anything
-        mockConf = self.mox.CreateMock(Configuration)
+        mockConf = self.mox.CreateMock(ExecConfiguration)
         mockConn = self.mox.CreateMockAnything(description='Mock a connection to a generic database. Just needs a disconnect() method.')
         mockConn.disconnect()
         self.mox.ReplayAll()

@@ -10,6 +10,7 @@ executionSection = "exec"
 THREADS_KEY = "threads"
 LATENCY_KEY = "latency"
 REPEAT_KEY = "iterations"
+HAMMER_CLASS_KEY = "hammer.class"
 
 # Exection defaults
 defaultThreads = 1
@@ -78,6 +79,9 @@ class ExecConfiguration(Configuration):
     
     def setNumIterations(self, count):
         self.setExecutionValues(dict(iterations=count))
+    
+    def getHammerClass(self):
+        return (self.execLookup(HAMMER_CLASS_KEY, None))
     
     def execLookup(self, option, default):
         return self._getConfWithDefault(lambda: self.parser.get(executionSection, option), default)

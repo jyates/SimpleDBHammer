@@ -2,18 +2,20 @@ __author__ = 'jyates'
 
 import argparse
 from hammer import Hammer, HammerRunner, HammerStats
+from configuration import ExecConfiguration
 
 DEFAULT_CONF ='hammer.cfg'
  
 class Client(): 
     
-    def __init__(self, *args):
+    def __init__(self, args):
         #create the parser
         parser = self._setupParser()
+        print args
         #parse the arguments sent to the client
         varDict = vars(parser.parse_args(args))
         
-        hammerClass = self._getHammerClass(varDict.pop('hammer'))
+        hammerClass = self._getHammerClass(varDict, varDict['conf'])
         #create the configuration specified by the conf or on the command line
         self.conf = self._createConfiguration(varDict.pop('conf'), hammerClass)
         
@@ -35,20 +37,32 @@ class Client():
         return parser
     
     
-    def _getHammerClass(self, name):
+    def _getHammerClass(self, dict,confFile):
         """
         Dynamically Get the hammer class specified in the hammer
         Args:
             hammer: fully specified name of the hammer
         """
-        if not name:
-            raise ValueError("No hammer class specified - cannot run the hammer. Please specify on the command line or in the configuration file")
+        try:
+            name = dict.pop('hammer')
+        except KeyError:
+            #didn't find the hammer from the command line, so check to see if it was specified in the root configuration
+            confReader = ExecConfiguration(confFile)
+            name = confReader.getHammerClass()
+            if not name:
+                raise KeyError("No hammer class specified - cannot run the hammer. Please specify on the command line or in the configuration file")
         
-        mod = __import__(name)
-        components = name.split('.')
-        for comp in components[1:]:
-            mod = getattr(mod, comp)
-        return mod
+        
+        #first get the full path spec for the class to load
+        pathSpec = name.rpartition(".")
+        #the get class name to load
+        v = [pathSpec[2]]
+        #import the module
+        mod = __import__(pathSpec[0], fromlist=v)
+        #get the class from the module
+        clazz = getattr(mod, v[0])
+        
+        return clazz
     
     def _createConfiguration(self, confFile, hammerClass):
         """

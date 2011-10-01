@@ -1,7 +1,7 @@
 __author__ = 'jyates'
 
 import unittest
-from configuration import  ExecConfiguration, MongoConfiguration
+from configuration import  ExecConfiguration
 
 class ExecConfigurationTest(unittest.TestCase):
     """Test the execution configuration"""
@@ -27,15 +27,3 @@ class ExecConfigurationTest(unittest.TestCase):
     def test_SetThreads(self):
         self.conf.setNumThreads(10)
         self.assertEqual(10, self.conf.getNumThreads())
-        
-class MongoConfigurationTest(unittest.TestCase):
-    """Test the MongoDB configuration reader"""
-    
-    def setUp(self):
-        self.conf = MongoConfiguration("testHammer.cfg")
-    
-    def test_MongoIP(self):
-        self.assertEquals("localhost", self.conf.getMongoHostIP())
-    
-    def test_MongoPort(self):
-        self.assertEquals(27017, self.conf.getMongoHostPort())

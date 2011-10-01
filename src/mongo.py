@@ -20,7 +20,7 @@ class MongoHammer(Hammer):
         self.database = self.connection[self.conf.getMongoDatabaseName()]
     
     @classmethod
-    def getConfigurationParser(cls, configFileName):
+    def getConfigurationParser(cls):
         """
         Get the configuration parser associated with this hammer.
         """

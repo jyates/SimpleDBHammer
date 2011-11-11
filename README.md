@@ -1,9 +1,9 @@
-DB Stomp - A General Purpose Utility Database Testing
+SimpleDBHammer - A General Purpose Utility Database Testing
 
 ## Overview: What the heck is this all about?
 Often times people need to hammer on their database installation. This can often be a tedious process, raequiring you to specially create a 'hammer' to fine tune your installation. This requires a myriad a moving parts, including multi-threading, randomizing queries, varying record types, etc. - all of which can be complex, annoying or easily implemented incorrectly.
 
-DB Stomp is a very flexible, python based database 'hammer' library/tool. We provide easy mechanisms for specifying the amount of parallelism, frequency, run statistics, and specifying the types of records.
+SimpleDBHammer is a very flexible, python based database 'hammer' library/tool. We provide easy mechanisms for specifying the amount of parallelism, frequency, run statistics, and specifying the types of records. Its a starting place for figuring out where things are starting to slow down, not the end-all, be-all of testing. It was written over a weekend, come on.
 
 ## Usage: Do do I use it?
 The client can be wrapped with a command line utility or one can be adapted from the various provided main classes (see src/run). The specific hammer to type to use is dynamically loaded and can be specified either on the command line or in the configuration file.
@@ -30,5 +30,5 @@ The use and distribution terms of the software covered by the Apache License 2.0
 ## Developers:
 Jesse Yates([@jesse_yates] (http://twitter.com/jesse_yates))
 
-##Corporate Sponoship:
-This was originally developed for use by GoChime to hammer on their MongoDB installation. Please visit them at www.gochime.com
+## Thanks:
+This was originally developed for use by GoChime to hammer on their MongoDB installation.

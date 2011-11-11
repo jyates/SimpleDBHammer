@@ -14,12 +14,12 @@ The actual writer specified is the one that will determine which kinds of record
 
 ## Dependencies: What else do I need to get?
 ### General
-python 2.7
-(mox 0.5.3)[http://code.google.com/p/pymox/]
+* python 2.7
+* (mox 0.5.3)[http://code.google.com/p/pymox/]
 
 ### Database Dependent
 #### MongoDB
-(pymongo 2.0.1)[http://api.mongodb.org/python/current/]
+* (pymongo 2.0.1)[http://api.mongodb.org/python/current/]
 
 ## Extension: What if you don't have the database I need?
 If we don't have the database type you are looking for, it is very easy to add. Merely you just subclass the Hammer class (see src/hammer.py) and implement a handful of methods. We are also actively developing this tool, so you can also check back often. If you are interested in extending this tool to new databases, look into src/hammers for an example of how to do this.
@@ -27,8 +27,8 @@ If we don't have the database type you are looking for, it is very easy to add. 
 ## License
 The use and distribution terms of the software covered by the Apache License 2.0 (http://www.apache.org/licenses/LICENSE-2.0.html), the full context of which can be found at License.html at the root of this distribution. By using this software, you are agreeing to all terms and conditions of the aforementioned license.
 
-## Developers:
+## Developers
 Jesse Yates([@jesse_yates] (http://twitter.com/jesse_yates))
 
-## Thanks:
+## Thanks
 This was originally developed for use by GoChime to hammer on their MongoDB installation.

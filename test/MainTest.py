@@ -8,6 +8,7 @@ import unittest
 import mox
 from hammerclient import Client
 from hammer import Hammer, HammerStats
+from test.mock import MockHammer
 import test
 import hammers.mongo
 
@@ -54,14 +55,17 @@ class TestClient(mox.MoxTestBase):
     
     def test_ImportHammerClass(self):
         #test getting top level class
-        dict = ({'hammer':'mongo.MongoHammer'})
-        hammerImport =  Client._getHammerClass(mox.MockObject(Client), dict, None)
-        self.assertTrue(hammerImport == hammers.mongo.MongoHammer)
+        dict = ({'hammer':'hammers.mongo.MongoHammer'})
+        client  = Client(['-c', 'testHammer1.cfg'])
+        hammerImport =  Client._getHammerClass(client, dict, None)
+        print "Imported:"+str(hammerImport)
+        self.assertEquals(hammerImport, hammers.mongo.MongoHammer)
         
         #test getting a nested class
         dict.setdefault('hammer', 'test.mock.MockHammer')
-        hammerImport =  Client._getHammerClass(mox.MockObject(Client), dict, None)
-        self.assertTrue(hammerImport == test.mock.MockHammer)
+        hammerImport =  Client._getHammerClass(client, dict, None)
+        self.assertEquals(MockHammer, hammerImport)
+        
         
 class TestHammerStats(mox.MoxTestBase):
 
@@ -101,6 +105,13 @@ class TestHammerStats(mox.MoxTestBase):
         self.assertEquals(4, len(history))
         return history    
     
+    
+def FakeClient(Client):
+    """Just a fake client so we can test the useful methods in client
+    """
+    def __init__():
+        pass
+
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']
     unittest.main()

@@ -12,10 +12,10 @@ LATENCY_KEY = "latency"
 REPEAT_KEY = "iterations"
 HAMMER_CLASS_KEY = "hammer.class"
 
-# Exection defaults
+# Execution defaults
 defaultThreads = 1
-defaultLatency = 10 # seconds
-defaultRepeat = 10 #do 10 writes
+defaultLatency = 10     # seconds
+defaultRepeat = 10      #do 10 writes
 
 class Configuration(object):
     """

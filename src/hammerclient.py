@@ -15,15 +15,13 @@ class Client():
         #parse the arguments sent to the client
         varDict = vars(parser.parse_args(args))
         
-        hammerClass = self._getHammerClass(varDict, varDict['conf'])
+        self.hammerClass = self._getHammerClass(varDict, varDict['conf'])
         #create the configuration specified by the conf or on the command line
-        self.conf = self._createConfiguration(varDict.pop('conf'), hammerClass)
+        self.conf = self._createConfiguration(varDict.pop('conf'), self.hammerClass)
         
         #if there are configuration values, then update the exection conf with values from the command line
         if len(varDict) > 0:
             self._updateConfiguration(self.conf, varDict)
-            
-        self.hammer = hammerClass(self.conf)
     
     
     def _setupParser(self):
@@ -52,17 +50,26 @@ class Client():
             if not name:
                 raise KeyError("No hammer class specified - cannot run the hammer. Please specify on the command line or in the configuration file")
         
-        
         #first get the full path spec for the class to load
-        pathSpec = name.rpartition(".")
-        #the get class name to load
-        v = [pathSpec[2]]
-        #import the module
-        mod = __import__(pathSpec[0], fromlist=v)
-        #get the class from the module
-        clazz = getattr(mod, v[0])
+        pathSpec = name.split(".")
+        print "actual path spec:"+ str(pathSpec)
         
-        return clazz
+        return self._importClass(pathSpec)
+        
+    
+    def _importClass(self, fullySpecPath):
+        ''' Import the fully specified class'''
+        
+        module = ".".join(fullySpecPath[:-1])
+        #print "importing:" +str(module)
+        # get the final class
+        clazz = fullySpecPath[len(fullySpecPath)-1]
+        
+        #import the full class
+        m = __import__(module, fromlist=[clazz])
+        #print "imported module: "+str(m)
+        
+        return getattr(m, clazz)
     
     def _createConfiguration(self, confFile, hammerClass):
         """
@@ -101,8 +108,10 @@ class Client():
         hammers = []
         for i in range(threads):
             #create the hammer
-            h = Hammer(self.conf)
+            h = self.hammerClass(self.conf)
+            print "Instantiated hammer:"+str(h)
             #add it to the runner
+            #here is where we do the switch on the configuration value for if it is parallel or not
             runner = HammerRunner(self.conf, h)
             hammers.append(runner)
             

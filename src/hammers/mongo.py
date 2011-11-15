@@ -1,4 +1,4 @@
-__author__='jyates'
+__author__ = 'jyates'
 
 from hammer import Hammer
 from configuration import ExecConfiguration
@@ -15,7 +15,7 @@ class MongoHammer(Hammer):
         """
         Since each connection to MongoDB runs over a different connection pool, each hammer writes to its own port (ensuring that we actually get parallel writes)
         """
-        super(Hammer).connect(clearHistory)
+        super(MongoHammer,self).connect(clearHistory)
         self.connection = Connection(self.conf.getMongoHostIP(), self.conf.getMongoHostPort())
         database = self.connection[self.conf.getMongoDatabaseName()]
         self.collection = database[self.conf.getMongoCollectionName()]
@@ -26,6 +26,20 @@ class MongoHammer(Hammer):
         Get the configuration parser associated with this hammer.
         """
         return MongoConfiguration
+    
+    
+class SimpleMongoHammer(MongoHammer):
+    """ Simple example hammer for mongo that just write the same record over and over again to the database."""
+    
+    # Adapted from Python docs for Mongo: http://api.mongodb.org/python/2.0.1/tutorial.html
+    record = {"author": "Mike","text": "My first blog post!","tags": ["mongodb", "python", "pymongo"]}
+    
+    def doWrite(self):
+        self.collection.insert(self.record)
+    
+#######################################################################
+############### Start Configuration for the mongo hammer ##############
+#######################################################################
     
 #section header
 mongoSection = "mongo"

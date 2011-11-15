@@ -11,18 +11,33 @@ The client can be wrapped with a command line utility or one can be adapted from
 A starter configuration is provided in src/hammer.cfg. This is also the default configuration file that will be read. All the options specified in this file will be overwritten by options passed to the client. 
 
 The actual writer specified is the one that will determine which kinds of records will be used to write to the database. See examples in src/examples for various types of hammers that can be created.
+re
+### Configuration Options: What can I fiddle with? (Advanced Usage)
+#### Parallelism
+ * enableMultiProcess
+The simplest way to run the tool is to just the use default configuration combined with a db specific configuration (see examples). However, the default model to use is to basic threads in Python. This _should_ work in the general case, where it is expected that the writer threads will be blocked writign to the database and is spending minimal time figuring out what the next value that should be written. This is combined with the fact that the degree of randomness in the waits between writes to help avoid the ([Global Interpreter Lock](http://en.wikipedia.org/wiki/Global_Interpreter_Lock)).
+
+However, if you find that threads are not getting the expected parallelism, you can also enable the use of pp (ParallelPython) to fork out each writer as its own process. This has implications for the number of processes running on a system, so it is should be used with care. If you don't specify the number of threads/processes then ParallelPython will handle that for you and it will be the number of cores in the system
 
 ## Dependencies: What else do I need to get?
 ### General
 * python 2.7
-* (mox 0.5.3)[http://code.google.com/p/pymox/]
+* Mox ([mox 0.5.3] (http://code.google.com/p/pymox/))
+* ParallelPython ([pp] (http://www.parallelpython.com/)) 
 
 ### Database Dependent
 #### MongoDB
-* (pymongo 2.0.1)[http://api.mongodb.org/python/current/]
+* Pymongo ([pymongo 2.0.1] (http://api.mongodb.org/python/current/))
 
 ## Extension: What if you don't have the database I need?
 If we don't have the database type you are looking for, it is very easy to add. Merely you just subclass the Hammer class (see src/hammer.py) and implement a handful of methods. We are also actively developing this tool, so you can also check back often. If you are interested in extending this tool to new databases, look into src/hammers for an example of how to do this.
+
+## Roadmap
+
+There are currently several things on the short-term roadmap (recommendations are also welcome):
+ 1) Add support for more metrics (mean, median, std deviation)
+ 2) Add dumping of data to a graphable format to make it easier to see trends over time.
+ 3) Add support for more databases
 
 ## License
 The use and distribution terms of the software covered by the Apache License 2.0 (http://www.apache.org/licenses/LICENSE-2.0.html), the full context of which can be found at License.html at the root of this distribution. By using this software, you are agreeing to all terms and conditions of the aforementioned license.

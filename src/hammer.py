@@ -26,7 +26,8 @@ class Hammer(object):
         Args:
             clearHistory: defaults to true. Remove any previous history associated with this hammer.
         """
-        self.history = dict()
+        if clearHistory:
+            self.history = dict()
         pass
 
     def write(self):
@@ -39,7 +40,7 @@ class Hammer(object):
         #do the write
         self.doWrite()
         #get the time difference
-        diffWrite = datetime.datetime.now() - startWrite
+        diffWrite = datetime.datetime.now() -  startWrite
         #store it in the history
         self.history.setdefault(self.counter, diffWrite)
         self.counter+=1
@@ -68,7 +69,10 @@ class HammerRunner(Thread):
             conf: Configuration to use
             hammer: do the actual writing to the database
         """
-        super(Thread, self).__init__()
+        #makes sure the thread gets initialized
+        super(HammerRunner, self).__init__()
+        
+        #setup the rest of the values
         self.conf = conf
         self.hammer = hammer
         self.hammer.connect()
@@ -79,17 +83,21 @@ class HammerRunner(Thread):
         '''
         freq = self.conf.getMaxLatency()
         times = self.conf.getNumIterations()
-        
+        print "Thread "+self.name+" info: \n Freq:"+str(freq)+"\n Times:"+str(times)+"\n"
         #If times <0, run forever. 
         #otherwise, just run it the specified number of times
         count =0
         while times <0 or count < times:
+            print "Thread "+self.name+" write number:"+str(count+1)
             #this might be an issue with random - if all threads are using the same random, could cause issues
             sleep = random.uniform(0, freq)
-            
+            print "Thread "+self.name+" sleeping for "+str(sleep)
             #after the sleep time, do a new put into the database
-            timer = Timer(sleep, self.hammer.write())
+            timer = Timer(sleep, self.hammer.write)
             timer.start()
+            #wait for the timer to finish
+            timer.join()
+            #and increment the counter!
             count+=1
         self.hammer.disconnect()
         

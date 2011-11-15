@@ -126,7 +126,7 @@ class Client():
         histories = HammerStats()
         for hammer in hammers:
             hammer.join()
-            histories.append(hammer.history)
+            histories.append(hammer.hammer.history)
             
         #Shutdown message
         print 'All hammers have finished hammering.'

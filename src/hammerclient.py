@@ -1,7 +1,7 @@
 __author__ = 'jyates'
 
 import argparse
-from hammer import Hammer, HammerRunner, HammerStats
+from hammer import  HammerRunner, HammerStats
 from configuration import ExecConfiguration
 
 DEFAULT_CONF ='hammer.cfg'

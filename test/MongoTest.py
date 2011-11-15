@@ -1,4 +1,4 @@
-from mongo import MongoConfiguration
+from hammers.mongo import MongoConfiguration
 import unittest
 class MongoConfigurationTest(unittest.TestCase):
     """Test the MongoDB configuration reader"""

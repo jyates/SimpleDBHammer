@@ -9,7 +9,7 @@ import mox
 from hammerclient import Client
 from hammer import Hammer, HammerStats
 import test
-import mongo
+import hammers.mongo
 
 class TestClient(mox.MoxTestBase):
     
@@ -56,7 +56,7 @@ class TestClient(mox.MoxTestBase):
         #test getting top level class
         dict = ({'hammer':'mongo.MongoHammer'})
         hammerImport =  Client._getHammerClass(mox.MockObject(Client), dict, None)
-        self.assertTrue(hammerImport == mongo.MongoHammer)
+        self.assertTrue(hammerImport == hammers.mongo.MongoHammer)
         
         #test getting a nested class
         dict.setdefault('hammer', 'test.mock.MockHammer')

@@ -8,7 +8,7 @@ class MongoHammer(Hammer):
     """
     Connect/disconnect from a mongoDB installation.
     Subclasses should be used for handling specific write cases.
-    The connection must have a disconnect() method or subclass must implement their own disconnect() method
+    Subclasses should implement void doWrite() to write to the database.
     """
     
     def connect(self, clearHistory=True):
@@ -17,7 +17,8 @@ class MongoHammer(Hammer):
         """
         super(Hammer).connect(clearHistory)
         self.connection = Connection(self.conf.getMongoHostIP(), self.conf.getMongoHostPort())
-        self.database = self.connection[self.conf.getMongoDatabaseName()]
+        database = self.connection[self.conf.getMongoDatabaseName()]
+        self.collection = database[self.conf.getMongoCollectionName()]
     
     @classmethod
     def getConfigurationParser(cls):
@@ -32,6 +33,8 @@ mongoSection = "mongo"
 #mongo configuration keys
 HOST_KEY = "ip"
 PORT_KEY = "port"
+DATABASE_KEY = "db"
+COLLECTION_KEY = "collection"
 
 # Mongo Defaults
 defaultHost = "127.0.0.1"
@@ -59,3 +62,9 @@ class MongoConfiguration(ExecConfiguration):
     
     def mongoLookup(self, option, default):
         return self._getConfWithDefault(lambda: self.parser.get(mongoSection, option), default)
+    
+    def getMongoDatabaseName(self):
+        return self.mongoLookup(DATABASE_KEY, None)
+    
+    def getMongoCollectionName(self):
+        return self.mongoLookup(COLLECTION_KEY, None)

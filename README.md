@@ -47,7 +47,6 @@ These configuration options and general usage can be see by just running 'python
  * forked - The simplest way to run the tool is to just the use default configuration combined with a db specific configuration (see examples). However, the default model to use is to basic threads in Python. This _should_ work in the general case, where it is expected that the writer threads will be blocked writign to the database and is spending minimal time figuring out what the next value that should be written. This is combined with the fact that the degree of randomness in the waits between writes to help avoid the ([Global Interpreter Lock](http://en.wikipedia.org/wiki/Global_Interpreter_Lock)). However, if you find that threads are not getting the expected parallelism, you can also enable the use of pp (ParallelPython) to fork out each writer as its own process. This has implications for the number of processes running on a system, so it is should be used with care. If you don't specify the number of threads/processes then ParallelPython will handle that for you and it will be the number of cores in the system
 
 	Defaults to: false
-
 * threads - If this is set to -1, the number of threads will be determined by ParallelPython and correspond closely to the number of processors available on the machine
 
 ## Dependencies: What else do I need to get?

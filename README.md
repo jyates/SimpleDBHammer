@@ -6,12 +6,16 @@ Often times people need to hammer on their database installation. This can often
 SimpleDBHammer is a very flexible, python based database 'hammer' library/tool. We provide easy mechanisms for specifying the amount of parallelism, frequency, run statistics, and specifying the types of records. Its a starting place for figuring out where things are starting to slow down, not the end-all, be-all of testing. It was written over a weekend, come on.
 
 ## Usage: Do do I use it?
-The client can be wrapped with a command line utility or one can be adapted from the various provided main classes (see src/run). The specific hammer to type to use is dynamically loaded and can be specified either on the command line or in the configuration file.
+The simplest way is to just run:
+
+	python simpledbhammer.py
+This will give you a help and allow you to set information on the command line. Alternatively, you can run the client from code.
+
+The client can be wrapped with a command line utility or one can be adapted from the various provided main classes. The specific hammer to type to use is dynamically loaded and can be specified either on the command line or in the configuration file.
 
 A starter configuration is provided in src/hammer.cfg. This is also the default configuration file that will be read. All the options specified in this file will be overwritten by options passed to the client. 
 
-The actual writer specified is the one that will determine which kinds of records will be used to write to the database. See examples in src/examples for various types of hammers that can be created.
-re
+The actual writer specified is the one that will determine which kinds of records will be used to write to the database. See SimpleMongoHammer for an example of how to write your own.
 
 Example client usage can be found at:
 

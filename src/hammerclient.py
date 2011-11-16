@@ -1,8 +1,8 @@
 __author__ = 'jyates'
 
 import argparse
-from hammer import  HammerRunner, HammerStats
-from configuration import ExecConfiguration
+from hammer import  HammerThread, HammerStats, InProcessRunner
+from configuration import ExecConfiguration, Configuration
 
 DEFAULT_CONF ='hammer.cfg'
  
@@ -32,6 +32,7 @@ class Client():
         parser.add_argument('-t', '--threads', help='Number of threads to use (degree of parallelism', default=argparse.SUPPRESS)
         parser.add_argument('-i', '--iter', help='Number of iterations to go through, If -1, go until manual shutdown.', default=argparse.SUPPRESS)
         parser.add_argument('-l', '--latency', help='Maximum amount of time to wait between iterations.', default=argparse.SUPPRESS)
+        parser.add_argument('-f', '--forked',help="Enable forking of each hammer to do 'true' parallelization", default=argparse.SUPPRESS)
         return parser
     
     
@@ -91,6 +92,8 @@ class Client():
             conf.setNumIterations(kvDict['iter'])
         if 'latency' in kvDict:
             conf.setMaxLatency(kvDict['latency'])
+        if 'forked' in kvDict:
+            conf.setForked(kvDict['forked'])
 
     
     def start(self, printStats=True):
@@ -105,28 +108,14 @@ class Client():
         threads = self.conf.getNumThreads()
         #Helpful updates of status
         print 'Setting up ', threads, ' hammers on the database'
-        hammers = []
-        for i in range(threads):
-            #create the hammer
-            h = self.hammerClass(self.conf)
-            print "Instantiated hammer:"+str(h)
-            #add it to the runner
-            #here is where we do the switch on the configuration value for if it is parallel or not
-            runner = HammerRunner(self.conf, h)
-            hammers.append(runner)
-            
-            #start running the hammer
-            runner.start()
-            
-            #more helpful debugging
-            print 'Starting hammer ', i
-            
         
-        #just join on each thread in turn - ensures that we stop when all threads have stopped running
-        histories = HammerStats()
-        for hammer in hammers:
-            hammer.join()
-            histories.append(hammer.hammer.history)
+        # figure out if which runner we need to use. Simple version, since we don't need to expect to have more than 1 type
+        if self.conf.enableMultiProcess():
+            runner = ForkedRunner(threads, self.hammerClass, self.conf)
+        else:
+            runner = InProcessRunner(threads, self.hammerClass, self.conf)
+        
+        histories = runner.start()
             
         #Shutdown message
         print 'All hammers have finished hammering.'

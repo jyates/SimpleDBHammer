@@ -40,9 +40,11 @@ These configuration options and general usage can be see by just running 'python
 
 	
 #### Parallelism (Advanced Usage)
- * enableMultiProcess - The simplest way to run the tool is to just the use default configuration combined with a db specific configuration (see examples). However, the default model to use is to basic threads in Python. This _should_ work in the general case, where it is expected that the writer threads will be blocked writign to the database and is spending minimal time figuring out what the next value that should be written. This is combined with the fact that the degree of randomness in the waits between writes to help avoid the ([Global Interpreter Lock](http://en.wikipedia.org/wiki/Global_Interpreter_Lock)). However, if you find that threads are not getting the expected parallelism, you can also enable the use of pp (ParallelPython) to fork out each writer as its own process. This has implications for the number of processes running on a system, so it is should be used with care. If you don't specify the number of threads/processes then ParallelPython will handle that for you and it will be the number of cores in the system
+ * forked - The simplest way to run the tool is to just the use default configuration combined with a db specific configuration (see examples). However, the default model to use is to basic threads in Python. This _should_ work in the general case, where it is expected that the writer threads will be blocked writign to the database and is spending minimal time figuring out what the next value that should be written. This is combined with the fact that the degree of randomness in the waits between writes to help avoid the ([Global Interpreter Lock](http://en.wikipedia.org/wiki/Global_Interpreter_Lock)). However, if you find that threads are not getting the expected parallelism, you can also enable the use of pp (ParallelPython) to fork out each writer as its own process. This has implications for the number of processes running on a system, so it is should be used with care. If you don't specify the number of threads/processes then ParallelPython will handle that for you and it will be the number of cores in the system
 
 	Defaults to: false
+
+* threads - If this is set to -1, the number of threads will be determined by ParallelPython and correspond closely to the number of processors available on the machine
 
 ## Dependencies: What else do I need to get?
 ### General
@@ -65,6 +67,9 @@ There are currently several things on the short-term roadmap (recommendations ar
 2. Add dumping of data to a graphable format to make it easier to see trends over time.
 3. Add support for more databases
 4. Add a setup.py or easyinstall for easy usage
+4. Look into adding a ForkingClient rather than a fork runner (or doing some cleanup there)
+4. Add support for just a single command line file to launch, rather than having to wrap the client in a simple function.
+5. Add cluster integration
 
 ## License
 The use and distribution terms of the software covered by the Apache License 2.0 (http://www.apache.org/licenses/LICENSE-2.0.html), the full context of which can be found at License.html at the root of this distribution. By using this software, you are agreeing to all terms and conditions of the aforementioned license.

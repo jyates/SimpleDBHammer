@@ -11,11 +11,13 @@ THREADS_KEY = "threads"
 LATENCY_KEY = "latency"
 REPEAT_KEY = "iterations"
 HAMMER_CLASS_KEY = "hammer.class"
+ENABLE_FORKING = "forked"
 
 # Execution defaults
 defaultThreads = 1
 defaultLatency = 10     # seconds
 defaultRepeat = 10      #do 10 writes
+defaultEnabledForking = False
 
 class Configuration(object):
     """
@@ -82,6 +84,12 @@ class ExecConfiguration(Configuration):
     
     def getHammerClass(self):
         return (self.execLookup(HAMMER_CLASS_KEY, None))
+    
+    def enableMultiProcess(self):
+        return (self.execLookup(ENABLE_FORKING, defaultEnabledForking))
+    
+    def setForked(self, fork):
+        self.setExecutionValues(dict(forked=fork))
     
     def execLookup(self, option, default):
         return self._getConfWithDefault(lambda: self.parser.get(executionSection, option), default)

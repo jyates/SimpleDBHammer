@@ -11,6 +11,7 @@ import ConfigTest
 import HammerTest
 import MainTest
 import MongoTest
+import ForkedTest
 import sys
     
 def load(module):
@@ -23,6 +24,7 @@ def main():
     suite.append(load(HammerTest))
     suite.append(load(MainTest))
     suite.append(load(MongoTest))
+    suite.append(load(ForkedTest))
     allTests = unittest.TestSuite(suite)
     
     result = unittest.TextTestRunner(verbosity=2).run(allTests)

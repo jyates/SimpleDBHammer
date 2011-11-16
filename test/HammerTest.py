@@ -6,12 +6,13 @@ Created on Sep 25, 2011
 Test all aspects of the hammer utility
 '''
 
-from hammer import Hammer, HammerRunner
+from hammer import Hammer, HammerThread, ForkedRunner
 from configuration import ExecConfiguration
 import mox
+from hammers.mongo import SimpleMongoHammer
 
 
-class TestHammerRunner(mox.MoxTestBase):
+class TestHammerThread(mox.MoxTestBase):
     """
     Test the hammer runner.
     Essentially, just check that it runs the expected number of times
@@ -32,7 +33,7 @@ class TestHammerRunner(mox.MoxTestBase):
         mockConf.getNumIterations().AndReturn(2)
         
         self.mox.ReplayAll()
-        runner = HammerRunner(mockConf, mockHammer)
+        runner = HammerThread(mockConf, mockHammer)
         runner.run()
         
         #verify the test

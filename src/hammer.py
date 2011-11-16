@@ -17,8 +17,8 @@
 from threading import Thread, Timer
 import random
 import datetime
-#import parallelpython to do the threading
 import pp
+from statlib import stats
 
 class Hammer(object):
     """
@@ -222,12 +222,13 @@ class HammerStats(object):
         """
         Print the stats for each of the hammers, and do some on the fly general stats
         """
+        allTimes = []
         print "----------------------------\n Per Hammer stats:\n----------------------------"
         #print out the stats for each hammer
         i = 0
         data = (datetime.timedelta(0), 0)
         for history in self.histories:
-            point = self._printStat(i, history)
+            point = self._printStat(i, history, allTimes)
             data = (data[0] + point[0], data[1] + point[1])
             print '\n'
             i += 1
@@ -236,9 +237,12 @@ class HammerStats(object):
         print "------------------------------\n General Stats:\n------------------------------"
         print 'Total writes:\t', data[1]
         print 'Total time spent writing:\t', str(data[0])
-        print 'Average time spent writing:\t', str(data[0] / data[1])
+        print 'Mean time spent writing:\t', str(data[0] / data[1])
+        #We could add more information here about the stats, now that all the times are gathered
+        print 'Standard deviation:\t\t', stats.stdev(allTimes)
+
             
-    def _printStat(self, index, history):
+    def _printStat(self, index, history, allTimes):
         print 'Hammer ', str(index), ':'
         count = 0
         totalDiff = datetime.timedelta(0)
@@ -247,7 +251,10 @@ class HammerStats(object):
             if key == 'done':
                 print 'Finished at :', str(history[key])
             else:
-                print 'Write ', str(key), ' took: ', str(history[key])
+                time = history[key]
+#                print "class:"+str(time.__class__.name)+"time:"+time
+                allTimes.append(time.total_seconds())
+                print 'Write ', str(key), ' took: ', str(time)
                 count += 1
                 totalDiff += history[key]
         return (totalDiff, count)

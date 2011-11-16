@@ -54,6 +54,7 @@ These configuration options and general usage can be see by just running 'python
 * python 2.7
 * Mox ([mox 0.5.3] (http://code.google.com/p/pymox/))
 * ParallelPython ([pp] (http://www.parallelpython.com/)) 
+* python-statlib ([statlib-1.1] (http://code.google.com/p/python-statlib/downloads/detail?name=statlib-1.1.tar.gz&can=2&q=))
 
 ### Database Dependent
 #### MongoDB
@@ -66,12 +67,10 @@ If we don't have the database type you are looking for, it is very easy to add. 
 
 There are currently several things on the short-term roadmap (recommendations are also welcome):
 
-1. Add support for more metrics (mean, median, std deviation)
 2. Add dumping of data to a graphable format to make it easier to see trends over time.
 3. Add support for more databases
 4. Add a setup.py or easyinstall for easy usage
 4. Look into adding a ForkingClient rather than a fork runner (or doing some cleanup there)
-4. Add support for just a single command line file to launch, rather than having to wrap the client in a simple function.
 5. Add cluster integration
 
 ## License
